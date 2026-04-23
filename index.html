@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>旅行预算日志 - Retro Edition</title>
+    <title>旅行预算日志 - Final Edition</title>
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -12,17 +12,17 @@
         [v-cloak] { display: none; }
 
         body {
-            background-color: #f4f1ea; /* 羊皮纸色背景 */
+            background-color: #f4f1ea;
             color: #2d2a26;
             font-family: 'EB Garamond', serif;
             background-image: radial-gradient(#d1cfc7 0.5px, transparent 0.5px);
-            background-size: 20px 20px; /* 背景点阵，模拟老式草稿纸 */
+            background-size: 20px 20px;
         }
 
         .retro-card {
             background: #fffdfa;
             border: 2px solid #2d2a26;
-            box-shadow: 4px 4px 0px 0px #2d2a26; /* 复古硬阴影 */
+            box-shadow: 4px 4px 0px 0px #2d2a26;
         }
 
         .retro-input {
@@ -39,10 +39,6 @@
             border-bottom-color: #2d2a26;
         }
 
-        .header-line {
-            border-bottom: 3px double #2d2a26;
-        }
-
         .stamp-btn {
             border: 2px solid #2d2a26;
             padding: 4px 12px;
@@ -50,6 +46,7 @@
             text-transform: uppercase;
             transition: all 0.2s;
             background: #fff;
+            cursor: pointer;
         }
 
         .stamp-btn:hover {
@@ -59,11 +56,19 @@
             box-shadow: 2px 2px 0px 0px #8b8682;
         }
 
-        .typewriter {
+        .typewriter { font-family: 'Courier Prime', monospace; }
+
+        /* 复古红色印章 */
+        .red-stamp {
+            border: 4px border-double;
+            border-style: double;
+            transform: rotate(12deg);
+            color: rgba(185, 28, 28, 0.6);
+            border-color: rgba(185, 28, 28, 0.6);
             font-family: 'Courier Prime', monospace;
+            pointer-events: none;
         }
 
-        /* 打印样式 */
         @media print {
             .no-print { display: none !important; }
             body { background: white; }
@@ -75,11 +80,11 @@
     <div id="app" v-cloak class="max-w-5xl mx-auto">
         
         <header class="text-center mb-16">
-            <p class="typewriter text-xs uppercase tracking-[0.3em] mb-2">— Travel Itinerary & Budget Ledger —</p>
-            <h1 class="text-5xl font-extrabold uppercase italic header-line inline-block pb-2 px-8">旅行开销日志</h1>
+            <p class="typewriter text-xs uppercase tracking-[0.3em] mb-2">— Travel Itinerary Ledger —</p>
+            <h1 class="text-5xl font-extrabold uppercase italic border-b-4 border-double border-slate-800 inline-block pb-2 px-8">旅行开销日志</h1>
             <div class="flex justify-center gap-12 mt-6 typewriter text-sm">
                 <span>DATE: {{ currentDate }}</span>
-                <span>FILE NO: 00{{ grandTotal % 999 }}</span>
+                <span>STATUS: {{ grandTotal > 0 ? 'ACTIVE' : 'EMPTY' }}</span>
             </div>
         </header>
 
@@ -94,24 +99,18 @@
                     <table class="w-full text-sm typewriter">
                         <thead>
                             <tr class="text-left border-b border-slate-300">
-                                <th class="py-2">FROM</th>
-                                <th class="py-2">TO</th>
-                                <th class="py-2">DATE</th>
-                                <th class="py-2">DEP</th>
-                                <th class="py-2">ARR</th>
-                                <th class="py-2 text-right">COST</th>
-                                <th class="no-print"></th>
+                                <th class="py-2">FROM</th><th class="py-2">TO</th><th class="py-2">DATE</th><th class="py-2">DEP</th><th class="py-2">ARR</th><th class="py-2 text-right">COST</th><th class="no-print"></th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr v-for="(item, index) in modules.flights.items" :key="index">
-                                <td class="py-3"><input v-model="item.from" class="retro-input w-24"></td>
-                                <td class="py-3"><input v-model="item.to" class="retro-input w-24"></td>
-                                <td class="py-3"><input v-model="item.date" type="text" placeholder="MM/DD" class="retro-input w-20"></td>
-                                <td class="py-3"><input v-model="item.depTime" class="retro-input w-16"></td>
-                                <td class="py-3"><input v-model="item.arrTime" class="retro-input w-16"></td>
-                                <td class="py-3"><input v-model.number="item.price" class="retro-input w-20 text-right font-bold"></td>
-                                <td class="no-print text-right"><button @click="removeItem('flights', index)" class="opacity-30 hover:opacity-100 px-2">×</button></td>
+                                <td class="py-2"><input v-model="item.from" class="retro-input w-24"></td>
+                                <td class="py-2"><input v-model="item.to" class="retro-input w-24"></td>
+                                <td class="py-2"><input v-model="item.date" placeholder="MM-DD" class="retro-input w-20"></td>
+                                <td class="py-2"><input v-model="item.depTime" class="retro-input w-16"></td>
+                                <td class="py-2"><input v-model="item.arrTime" class="retro-input w-16"></td>
+                                <td class="py-2"><input v-model.number="item.price" class="retro-input w-20 text-right font-bold"></td>
+                                <td class="no-print text-right"><button @click="removeItem('flights', index)" class="opacity-30 hover:opacity-100 px-2 text-red-700 font-bold text-xl">×</button></td>
                             </tr>
                         </tbody>
                     </table>
@@ -128,55 +127,86 @@
                         <div v-for="(item, index) in module.items" :key="index" class="flex items-end gap-2 group relative">
                             <input v-model="item.city" placeholder="CITY" class="retro-input w-20 text-xs font-bold italic">
                             <input v-model="item.desc" placeholder="DESCRIPTION" class="retro-input flex-grow text-sm">
-                            <span class="typewriter text-xs">$</span>
-                            <input v-model.number="item.price" class="retro-input w-16 text-right font-bold">
+                            <input v-model.number="item.price" class="retro-input w-16 text-right font-bold text-lg">
                             <button @click="removeItem(key, index)" class="no-print absolute -right-6 opacity-0 group-hover:opacity-100 text-xs text-red-800">DEL</button>
                         </div>
                     </div>
                 </section>
             </div>
 
-            <section class="max-w-md mx-auto mt-20 relative">
-                <div class="w-full h-4 bg-[url('https://www.transparenttextures.com/patterns/pinstriped-suit.png')] bg-repeat-x border-t-2 border-slate-800"></div>
-                <div class="retro-card p-8 bg-white relative">
-                    <div v-if="grandTotal > 0" class="absolute top-4 right-4 border-4 border-red-700/60 text-red-700/60 font-black px-4 py-1 rounded rotate-12 pointer-events-none uppercase text-2xl border-double">
-                        Budgeted
-                    </div>
-                    
-                    <h2 class="typewriter text-center font-bold border-b-2 border-slate-800 pb-2 mb-6">EXPENSE SUMMARY</h2>
-                    
-                    <div class="typewriter space-y-4 text-sm">
-                        <div v-for="(module, key) in allModules" class="flex justify-between italic">
-                            <span>* {{ module.title }}</span>
-                            <span>{{ calculateModuleTotal(key).toFixed(2) }}</span>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 mt-20">
+                
+                <section class="relative">
+                    <div class="w-full h-3 bg-[url('https://www.transparenttextures.com/patterns/pinstriped-suit.png')] bg-repeat-x border-t-2 border-slate-800"></div>
+                    <div class="retro-card p-8 bg-white relative">
+                        <div v-if="grandTotal > 0" class="absolute top-8 right-4 red-stamp px-4 py-1 text-2xl font-black uppercase">
+                            Budgeted
                         </div>
                         
-                        <div class="border-t-2 border-dashed border-slate-800 pt-4 mt-6">
-                            <p class="text-xs font-bold mb-4 uppercase">Breakdown by City:</p>
-                            <div v-for="(total, city) in cityTotals" class="flex justify-between text-xs">
-                                <span>{{ city || 'UNCLASSIFIED' }}</span>
-                                <span>{{ total.toFixed(2) }}</span>
+                        <h2 class="typewriter text-center font-bold border-b-2 border-slate-800 pb-2 mb-6 uppercase tracking-widest text-lg">Expense Summary</h2>
+                        
+                        <div class="typewriter space-y-4 text-sm">
+                            <div v-for="(module, key) in allModules" class="flex justify-between italic">
+                                <span>* {{ module.title }}</span>
+                                <span>{{ calculateModuleTotal(key).toLocaleString('zh-CN', {minimumFractionDigits: 2}) }}</span>
+                            </div>
+                            
+                            <div class="border-t-2 border-dashed border-slate-800 pt-4 mt-6">
+                                <p class="text-xs font-bold mb-4 uppercase text-slate-500 tracking-tighter">Distribution by City:</p>
+                                <div v-for="(total, city) in cityTotals" class="flex justify-between text-xs pb-1">
+                                    <span>{{ city || 'UNCLASSIFIED' }}</span>
+                                    <span>{{ total.toLocaleString() }}</span>
+                                </div>
+                            </div>
+
+                            <div class="border-t-2 border-slate-800 pt-6 mt-6 flex justify-between items-center">
+                                <span class="text-xl font-bold uppercase tracking-tighter">Total Cost</span>
+                                <span class="text-3xl font-black underline underline-offset-8">￥{{ grandTotal.toLocaleString() }}</span>
                             </div>
                         </div>
+                    </div>
+                </section>
 
-                        <div class="border-t-2 border-slate-800 pt-4 mt-6 flex justify-between items-center">
-                            <span class="text-lg font-bold">TOTAL AMOUNT</span>
-                            <span class="text-2xl font-black underline underline-offset-4">￥{{ grandTotal.toLocaleString() }}</span>
+                <section class="no-print space-y-6">
+                    <div class="retro-card p-8 bg-slate-50 border-dashed">
+                        <h2 class="typewriter text-center font-bold mb-6 text-slate-500 uppercase tracking-widest text-lg italic">— Ledger Archives —</h2>
+                        
+                        <div class="space-y-4">
+                            <div class="group">
+                                <p class="text-[10px] text-slate-400 font-bold uppercase mb-1 typewriter">Save current state to file:</p>
+                                <button @click="exportData" class="w-full stamp-btn py-3 text-sm flex items-center justify-center gap-2">
+                                    💾 EXPORT BACKUP (.JSON)
+                                </button>
+                            </div>
+                            
+                            <div class="group">
+                                <p class="text-[10px] text-slate-400 font-bold uppercase mb-1 typewriter">Load from previous backup:</p>
+                                <div class="relative">
+                                    <input type="file" @change="importData" id="importFile" class="hidden" accept=".json">
+                                    <label for="importFile" class="w-full stamp-btn py-3 text-sm flex items-center justify-center cursor-pointer gap-2">
+                                        📂 IMPORT BACKUP (.JSON)
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="pt-6">
+                                <button @click="window.print()" class="w-full bg-slate-800 text-white font-bold py-4 hover:bg-slate-700 transition flex items-center justify-center gap-2 text-lg">
+                                    🖨️ PRINT FULL LEDGER (PDF)
+                                </button>
+                            </div>
                         </div>
                     </div>
-
-                    <div class="mt-12 no-print">
-                        <button @click="window.print()" class="w-full stamp-btn py-3 text-lg">
-                            Print Full Ledger
-                        </button>
-                    </div>
-                </div>
-            </section>
+                    
+                    <p class="text-[10px] typewriter text-center text-slate-400 px-8 leading-relaxed uppercase">
+                        Data is stored locally in your browser cache. Use the Export function for long-term safety.
+                    </p>
+                </section>
+            </div>
 
         </div>
 
-        <footer class="mt-20 text-center typewriter text-[10px] uppercase text-slate-400 no-print">
-            End of Record - Safe Travels
+        <footer class="mt-20 text-center typewriter text-[10px] uppercase text-slate-400 no-print border-t border-slate-200 pt-8 italic">
+            End of Record - Certified Private Ledger
         </footer>
     </div>
 
@@ -185,14 +215,16 @@
 
         createApp({
             setup() {
-                const saved = localStorage.getItem('retro_travel_data');
-                const modules = reactive(saved ? JSON.parse(saved) : {
-                    flights: { title: 'Air Passage', items: [{ from: 'SHANGHAI', to: 'LONDON', date: '05/12', depTime: '10:00', arrTime: '16:00', price: 0 }] },
-                    transport: { title: 'Ground Transport', items: [{ city: 'LONDON', desc: 'Railway Pass', price: 0 }] },
-                    hotels: { title: 'Accommodation', items: [{ city: 'LONDON', desc: 'Grand Hotel', price: 0 }] },
-                    entertainment: { title: 'Activities', items: [{ city: 'LONDON', desc: 'Museum Entry', price: 0 }] },
-                    dining: { title: 'Dining & Food', items: [{ city: 'LONDON', desc: 'Dinner at Pub', price: 0 }] }
-                });
+                const defaultData = {
+                    flights: { title: 'Air Passage', items: [{ from: '', to: '', date: '', depTime: '', arrTime: '', price: 0 }] },
+                    transport: { title: 'Ground Transport', items: [{ city: '', desc: '', price: 0 }] },
+                    hotels: { title: 'Accommodation', items: [{ city: '', desc: '', price: 0 }] },
+                    entertainment: { title: 'Activities', items: [{ city: '', desc: '', price: 0 }] },
+                    dining: { title: 'Dining & Food', items: [{ city: '', desc: '', price: 0 }] }
+                };
+
+                const saved = localStorage.getItem('retro_travel_data_v2');
+                const modules = reactive(saved ? JSON.parse(saved) : defaultData);
 
                 const cityModules = computed(() => {
                     const { flights, ...others } = modules;
@@ -207,13 +239,13 @@
                 };
 
                 const removeItem = (key, index) => {
-                    modules[key].items.splice(index, 1);
+                    if (modules[key].items.length > 0) modules[key].items.splice(index, 1);
                 };
 
                 const calculateModuleTotal = (key) => {
                     return modules[key].items.reduce((sum, item) => sum + (Number(item.price) || 0), 0);
                 };
-
+                
                 const grandTotal = computed(() => {
                     return Object.keys(modules).reduce((total, key) => total + calculateModuleTotal(key), 0);
                 });
@@ -230,16 +262,46 @@
                     return totals;
                 });
 
+                const exportData = () => {
+                    const dataStr = JSON.stringify(modules, null, 2);
+                    const blob = new Blob([dataStr], { type: 'application/json' });
+                    const url = URL.createObjectURL(blob);
+                    const link = document.createElement('a');
+                    link.href = url;
+                    link.download = `travel-budget-${new Date().toISOString().slice(0,10)}.json`;
+                    link.click();
+                    URL.revokeObjectURL(url);
+                };
+
+                const importData = (event) => {
+                    const file = event.target.files[0];
+                    if (!file) return;
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        try {
+                            const imported = JSON.parse(e.target.result);
+                            if (imported.flights && imported.hotels) {
+                                Object.assign(modules, imported);
+                                alert('✅ 数据已导入！数据档案已更新。');
+                            }
+                        } catch (err) {
+                            alert('❌ 文件解析失败，请确保选择了正确的预算 JSON 文件。');
+                        }
+                    };
+                    reader.readAsText(file);
+                    event.target.value = '';
+                };
+
                 const currentDate = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
 
                 watch(modules, (newVal) => {
-                    localStorage.setItem('retro_travel_data', JSON.stringify(newVal));
+                    localStorage.setItem('retro_travel_data_v2', JSON.stringify(newVal));
                 }, { deep: true });
 
                 return { 
                     modules, cityModules, allModules: modules, 
                     addItem, removeItem, calculateModuleTotal, grandTotal, cityTotals,
-                    currentDate
+                    exportData, importData, currentDate 
                 };
             }
         }).mount('#app');
