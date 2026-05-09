@@ -57,8 +57,7 @@
                                 <div class="flex gap-2 no-print"><button @click="addFlightQuote(item)" class="stamp-btn text-[10px]">+ OPTION</button><button @click="removeItem('flights', index)" class="stamp-btn text-[10px] text-red-800">DEL LEG</button></div>
                             </div>
                             <div class="space-y-2">
-                                <div v-for="(quote, qIndex) in item.quotes" :key="qIndex" class="grid grid-cols-1 md:grid-cols-[110px_90px_90px_90px_90px_100px_1fr_40px] gap-2 items-end typewriter text-xs">
-                                    <input v-model="quote.vendor" placeholder="平台" class="retro-input w-full">
+                                <div v-for="(quote, qIndex) in item.quotes" :key="qIndex" class="grid grid-cols-1 md:grid-cols-[95px_95px_95px_95px_105px_1fr_40px] gap-2 items-end typewriter text-xs">
                                     <input v-model="quote.depDate" placeholder="出发日期" class="retro-input w-full">
                                     <input v-model="quote.arrDate" placeholder="到达日期" class="retro-input w-full">
                                     <input v-model="quote.depTime" placeholder="出发时间" class="retro-input w-full">
@@ -80,8 +79,8 @@
     <script>
         const { createApp, reactive, ref, computed, watch, nextTick } = Vue;
         createApp({ setup() {
-            const defaultQuote = () => ({ vendor: '', depDate: '', arrDate: '', depTime: '', arrTime: '', price: 0, note: '' });
-            const normalizeQuote = (quote) => ({ vendor: quote.vendor || '', depDate: quote.depDate || '', arrDate: quote.arrDate || '', depTime: quote.depTime || '', arrTime: quote.arrTime || '', price: Number(quote.price) || 0, note: quote.note || '' });
+            const defaultQuote = () => ({ depDate: '', arrDate: '', depTime: '', arrTime: '', price: 0, note: '' });
+            const normalizeQuote = (quote) => ({ depDate: quote.depDate || '', arrDate: quote.arrDate || '', depTime: quote.depTime || '', arrTime: quote.arrTime || '', price: Number(quote.price) || 0, note: quote.note || '' });
             const defaultFlight = () => ({ from: '', to: '', date: '', depTime: '', arrTime: '', price: 0, quotes: [defaultQuote()] });
             const defaultData = { flights: { title: 'Air Passage', items: [defaultFlight()] }, transport: { title: 'Ground Transport', items: [{ city: '', desc: '', price: 0 }] }, hotels: { title: 'Accommodation', items: [{ city: '', desc: '', price: 0 }] }, entertainment: { title: 'Activities', items: [{ city: '', desc: '', price: 0 }] }, dining: { title: 'Dining & Food', items: [{ city: '', desc: '', price: 0 }] } };
             const defaultItinerary = { items: [{ day: 'DAY 1', date: '', time: '', city: '', place: '', title: '', notes: '', budget: 0 }, { day: 'DAY 2', date: '', time: '', city: '', place: '', title: '', notes: '', budget: 0 }] };
