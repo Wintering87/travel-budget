@@ -8,92 +8,22 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=EB+Garamond:ital,wght@0,400;0,800;1,400&display=swap');
-
         [v-cloak] { display: none; }
-
-        body {
-            background-color: #f4f1ea;
-            color: #2d2a26;
-            font-family: 'EB Garamond', serif;
-            background-image: radial-gradient(#d1cfc7 0.5px, transparent 0.5px);
-            background-size: 20px 20px;
-        }
-
-        .retro-card {
-            background: #fffdfa;
-            border: 2px solid #2d2a26;
-            box-shadow: 4px 4px 0px 0px #2d2a26;
-        }
-
-        .retro-input {
-            background: transparent;
-            border: none;
-            border-bottom: 1px dashed #8b8682;
-            font-family: 'Courier Prime', monospace;
-            padding: 2px 4px;
-        }
-
-        .retro-input:focus {
-            outline: none;
-            border-bottom-style: solid;
-            border-bottom-color: #2d2a26;
-        }
-
-        .stamp-btn {
-            border: 2px solid #2d2a26;
-            padding: 4px 12px;
-            font-weight: bold;
-            text-transform: uppercase;
-            transition: all 0.2s;
-            background: #fff;
-            cursor: pointer;
-        }
-
-        .stamp-btn:hover {
-            background: #2d2a26;
-            color: #fff;
-            transform: translate(-2px, -2px);
-            box-shadow: 2px 2px 0px 0px #8b8682;
-        }
-
+        body { background-color: #f4f1ea; color: #2d2a26; font-family: 'EB Garamond', serif; background-image: radial-gradient(#d1cfc7 0.5px, transparent 0.5px); background-size: 20px 20px; }
+        .retro-card { background: #fffdfa; border: 2px solid #2d2a26; box-shadow: 4px 4px 0px 0px #2d2a26; }
+        .retro-input { background: transparent; border: none; border-bottom: 1px dashed #8b8682; font-family: 'Courier Prime', monospace; padding: 2px 4px; }
+        .retro-input:focus { outline: none; border-bottom-style: solid; border-bottom-color: #2d2a26; }
+        .stamp-btn { border: 2px solid #2d2a26; padding: 4px 12px; font-weight: bold; text-transform: uppercase; transition: all 0.2s; background: #fff; cursor: pointer; }
+        .stamp-btn:hover { background: #2d2a26; color: #fff; transform: translate(-2px, -2px); box-shadow: 2px 2px 0px 0px #8b8682; }
         .typewriter { font-family: 'Courier Prime', monospace; }
-
-        .timeline-line {
-            background-image: linear-gradient(#2d2a26 55%, rgba(45, 42, 38, 0) 0%);
-            background-position: right top;
-            background-size: 2px 12px;
-            background-repeat: repeat-y;
-        }
-
-        .timeline-dot {
-            width: 14px;
-            height: 14px;
-            border: 2px solid #2d2a26;
-            background: #fffdfa;
-            box-shadow: 2px 2px 0 #2d2a26;
-        }
-
-        /* 复古红色印章 */
-        .red-stamp {
-            border: 4px border-double;
-            border-style: double;
-            transform: rotate(12deg);
-            color: rgba(185, 28, 28, 0.6);
-            border-color: rgba(185, 28, 28, 0.6);
-            font-family: 'Courier Prime', monospace;
-            pointer-events: none;
-        }
-
-        @media print {
-            .no-print { display: none !important; }
-            body { background: white; }
-            .retro-card { box-shadow: none; border-width: 1px; }
-        }
+        .timeline-line { background-image: linear-gradient(#2d2a26 55%, rgba(45, 42, 38, 0) 0%); background-position: right top; background-size: 2px 12px; background-repeat: repeat-y; }
+        .timeline-dot { width: 14px; height: 14px; border: 2px solid #2d2a26; background: #fffdfa; box-shadow: 2px 2px 0 #2d2a26; }
+        .red-stamp { border: 4px double rgba(185, 28, 28, 0.6); transform: rotate(12deg); color: rgba(185, 28, 28, 0.6); font-family: 'Courier Prime', monospace; pointer-events: none; }
+        @media print { .no-print { display: none !important; } body { background: white; padding: 0; } .retro-card { box-shadow: none; border-width: 1px; } .budget-only { display: none !important; } .print-break { break-inside: avoid; } }
     </style>
 </head>
 <body class="p-4 md:p-12">
     <div id="app" v-cloak class="max-w-5xl mx-auto">
-        
         <header class="text-center mb-16">
             <p class="typewriter text-xs uppercase tracking-[0.3em] mb-2">— Travel Itinerary Ledger —</p>
             <h1 class="text-5xl font-extrabold uppercase italic border-b-4 border-double border-slate-800 inline-block pb-2 px-8">旅行开销日志</h1>
@@ -104,22 +34,35 @@
         </header>
 
         <div class="space-y-12">
-            
-            <section class="retro-card p-6">
-                <div class="flex justify-between items-center border-b-2 border-slate-800 pb-2 mb-6">
+            <section class="retro-card p-6 print-break">
+                <div class="flex flex-col md:flex-row md:justify-between md:items-end gap-4 border-b-2 border-slate-800 pb-2 mb-6">
                     <div>
                         <p class="typewriter text-[10px] uppercase tracking-[0.25em] text-slate-500">Draft Route Plan</p>
                         <h2 class="text-2xl font-bold italic">大概行程计划 (TIMELINE)</h2>
                     </div>
-                    <button @click="addItineraryItem" class="stamp-btn text-xs no-print">+ ADD PLAN</button>
+                    <div class="flex flex-wrap gap-2 no-print">
+                        <button @click="addItineraryItem" class="stamp-btn text-xs">+ ADD PLAN</button>
+                        <button @click="printItinerary" class="stamp-btn text-xs">PRINT ITINERARY</button>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mb-8 typewriter text-xs">
+                    <div v-for="summary in daySummaries" :key="summary.day" class="border border-dashed border-slate-400 p-3 bg-white/60">
+                        <div class="font-bold uppercase">{{ summary.day || 'UNCLASSIFIED' }}</div>
+                        <div class="text-slate-500 mt-1">{{ summary.count }} plans · ￥{{ summary.total.toLocaleString() }}</div>
+                    </div>
                 </div>
 
                 <div class="space-y-6">
-                    <div v-for="(item, index) in itineraryItems" :key="index" class="relative grid grid-cols-[96px_24px_1fr] md:grid-cols-[132px_32px_1fr] gap-3 md:gap-5 group">
+                    <div v-for="(item, index) in itineraryItems" :key="index" class="relative grid grid-cols-[96px_24px_1fr] md:grid-cols-[132px_32px_1fr] gap-3 md:gap-5 group print-break">
                         <div class="typewriter text-right pt-1">
                             <input v-model="item.day" placeholder="DAY 1" class="retro-input w-full text-right text-xs font-bold uppercase">
                             <input v-model="item.date" placeholder="MM-DD" class="retro-input w-full text-right text-[11px] mt-2 text-slate-500">
                             <input v-model="item.time" placeholder="09:00" class="retro-input w-full text-right text-[11px] mt-2 text-slate-500">
+                            <div class="mt-3 no-print flex justify-end gap-1">
+                                <button @click="moveItineraryItem(index, -1)" class="stamp-btn text-[10px] px-2 py-1" :disabled="index === 0">↑</button>
+                                <button @click="moveItineraryItem(index, 1)" class="stamp-btn text-[10px] px-2 py-1" :disabled="index === itineraryItems.length - 1">↓</button>
+                            </div>
                         </div>
 
                         <div class="relative flex justify-center timeline-line">
@@ -127,13 +70,14 @@
                         </div>
 
                         <div class="border-l-4 border-double border-slate-800 pl-4 pb-6">
-                            <div class="grid grid-cols-1 md:grid-cols-[1fr_120px] gap-3">
+                            <div class="grid grid-cols-1 md:grid-cols-[1fr_120px_110px] gap-3">
                                 <input v-model="item.title" placeholder="行程标题 / PLAN TITLE" class="retro-input text-lg font-bold italic">
                                 <input v-model="item.city" placeholder="CITY" class="retro-input typewriter text-xs font-bold uppercase">
+                                <input v-model.number="item.budget" placeholder="￥BUDGET" class="retro-input typewriter text-xs font-bold text-right">
                             </div>
                             <textarea v-model="item.notes" placeholder="记录交通、景点、预约、备忘等大概安排..." rows="2" class="retro-input w-full mt-3 text-sm resize-y leading-relaxed"></textarea>
                             <div class="flex justify-between items-center mt-2 typewriter text-[10px] text-slate-400 uppercase">
-                                <span>Timeline Entry #{{ index + 1 }}</span>
+                                <span>Timeline Entry #{{ index + 1 }} · Linked Budget ￥{{ Number(item.budget || 0).toLocaleString() }}</span>
                                 <button @click="removeItineraryItem(index)" class="no-print opacity-30 group-hover:opacity-100 text-red-800 font-bold">DELETE</button>
                             </div>
                         </div>
@@ -141,18 +85,14 @@
                 </div>
             </section>
 
-            <section class="retro-card p-6">
+            <section class="retro-card p-6 budget-only">
                 <div class="flex justify-between items-center border-b-2 border-slate-800 pb-2 mb-6">
                     <h2 class="text-2xl font-bold italic">航线飞行纪录 (FLIGHTS)</h2>
                     <button @click="addItem('flights')" class="stamp-btn text-xs no-print">+ ADD LEG</button>
                 </div>
                 <div class="overflow-x-auto">
                     <table class="w-full text-sm typewriter">
-                        <thead>
-                            <tr class="text-left border-b border-slate-300">
-                                <th class="py-2">FROM</th><th class="py-2">TO</th><th class="py-2">DATE</th><th class="py-2">DEP</th><th class="py-2">ARR</th><th class="py-2 text-right">COST</th><th class="no-print"></th>
-                            </tr>
-                        </thead>
+                        <thead><tr class="text-left border-b border-slate-300"><th class="py-2">FROM</th><th class="py-2">TO</th><th class="py-2">DATE</th><th class="py-2">DEP</th><th class="py-2">ARR</th><th class="py-2 text-right">COST</th><th class="no-print"></th></tr></thead>
                         <tbody>
                             <tr v-for="(item, index) in modules.flights.items" :key="index">
                                 <td class="py-2"><input v-model="item.from" class="retro-input w-24"></td>
@@ -168,12 +108,9 @@
                 </div>
             </section>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 budget-only">
                 <section v-for="(module, key) in cityModules" :key="key" class="retro-card p-6 border-t-[12px] border-t-slate-800">
-                    <div class="flex justify-between items-center mb-6">
-                        <h2 class="text-xl font-bold uppercase tracking-widest">{{ module.title }}</h2>
-                        <button @click="addItem(key)" class="stamp-btn text-[10px] no-print">LOG ITEM</button>
-                    </div>
+                    <div class="flex justify-between items-center mb-6"><h2 class="text-xl font-bold uppercase tracking-widest">{{ module.title }}</h2><button @click="addItem(key)" class="stamp-btn text-[10px] no-print">LOG ITEM</button></div>
                     <div class="space-y-4">
                         <div v-for="(item, index) in module.items" :key="index" class="flex items-end gap-2 group relative">
                             <input v-model="item.city" placeholder="CITY" class="retro-input w-20 text-xs font-bold italic">
@@ -185,35 +122,17 @@
                 </section>
             </div>
 
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 mt-20">
-                
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 mt-20 budget-only">
                 <section class="relative">
                     <div class="w-full h-3 bg-[url('https://www.transparenttextures.com/patterns/pinstriped-suit.png')] bg-repeat-x border-t-2 border-slate-800"></div>
                     <div class="retro-card p-8 bg-white relative">
-                        <div v-if="grandTotal > 0" class="absolute top-8 right-4 red-stamp px-4 py-1 text-2xl font-black uppercase">
-                            Budgeted
-                        </div>
-                        
+                        <div v-if="grandTotal > 0" class="absolute top-8 right-4 red-stamp px-4 py-1 text-2xl font-black uppercase">Budgeted</div>
                         <h2 class="typewriter text-center font-bold border-b-2 border-slate-800 pb-2 mb-6 uppercase tracking-widest text-lg">Expense Summary</h2>
-                        
                         <div class="typewriter space-y-4 text-sm">
-                            <div v-for="(module, key) in allModules" class="flex justify-between italic">
-                                <span>* {{ module.title }}</span>
-                                <span>{{ calculateModuleTotal(key).toLocaleString('zh-CN', {minimumFractionDigits: 2}) }}</span>
-                            </div>
-                            
-                            <div class="border-t-2 border-dashed border-slate-800 pt-4 mt-6">
-                                <p class="text-xs font-bold mb-4 uppercase text-slate-500 tracking-tighter">Distribution by City:</p>
-                                <div v-for="(total, city) in cityTotals" class="flex justify-between text-xs pb-1">
-                                    <span>{{ city || 'UNCLASSIFIED' }}</span>
-                                    <span>{{ total.toLocaleString() }}</span>
-                                </div>
-                            </div>
-
-                            <div class="border-t-2 border-slate-800 pt-6 mt-6 flex justify-between items-center">
-                                <span class="text-xl font-bold uppercase tracking-tighter">Total Cost</span>
-                                <span class="text-3xl font-black underline underline-offset-8">￥{{ grandTotal.toLocaleString() }}</span>
-                            </div>
+                            <div v-for="(module, key) in allModules" class="flex justify-between italic"><span>* {{ module.title }}</span><span>{{ calculateModuleTotal(key).toLocaleString('zh-CN', {minimumFractionDigits: 2}) }}</span></div>
+                            <div class="flex justify-between italic"><span>* Itinerary Estimate</span><span>{{ itineraryTotal.toLocaleString('zh-CN', {minimumFractionDigits: 2}) }}</span></div>
+                            <div class="border-t-2 border-dashed border-slate-800 pt-4 mt-6"><p class="text-xs font-bold mb-4 uppercase text-slate-500 tracking-tighter">Distribution by City:</p><div v-for="(total, city) in cityTotals" class="flex justify-between text-xs pb-1"><span>{{ city || 'UNCLASSIFIED' }}</span><span>{{ total.toLocaleString() }}</span></div></div>
+                            <div class="border-t-2 border-slate-800 pt-6 mt-6 flex justify-between items-center"><span class="text-xl font-bold uppercase tracking-tighter">Total Cost</span><span class="text-3xl font-black underline underline-offset-8">￥{{ combinedTotal.toLocaleString() }}</span></div>
                         </div>
                     </div>
                 </section>
@@ -221,176 +140,52 @@
                 <section class="no-print space-y-6">
                     <div class="retro-card p-8 bg-slate-50 border-dashed">
                         <h2 class="typewriter text-center font-bold mb-6 text-slate-500 uppercase tracking-widest text-lg italic">— Ledger Archives —</h2>
-                        
                         <div class="space-y-4">
-                            <div class="group">
-                                <p class="text-[10px] text-slate-400 font-bold uppercase mb-1 typewriter">Save current state to file:</p>
-                                <button @click="exportData" class="w-full stamp-btn py-3 text-sm flex items-center justify-center gap-2">
-                                    💾 EXPORT BACKUP (.JSON)
-                                </button>
-                            </div>
-                            
-                            <div class="group">
-                                <p class="text-[10px] text-slate-400 font-bold uppercase mb-1 typewriter">Load from previous backup:</p>
-                                <div class="relative">
-                                    <input type="file" @change="importData" id="importFile" class="hidden" accept=".json">
-                                    <label for="importFile" class="w-full stamp-btn py-3 text-sm flex items-center justify-center cursor-pointer gap-2">
-                                        📂 IMPORT BACKUP (.JSON)
-                                    </label>
-                                </div>
-                            </div>
-
-                            <div class="pt-6">
-                                <button @click="window.print()" class="w-full bg-slate-800 text-white font-bold py-4 hover:bg-slate-700 transition flex items-center justify-center gap-2 text-lg">
-                                    🖨️ PRINT FULL LEDGER (PDF)
-                                </button>
-                            </div>
+                            <div class="group"><p class="text-[10px] text-slate-400 font-bold uppercase mb-1 typewriter">Save current state to file:</p><button @click="exportData" class="w-full stamp-btn py-3 text-sm flex items-center justify-center gap-2">💾 EXPORT BACKUP (.JSON)</button></div>
+                            <div class="group"><p class="text-[10px] text-slate-400 font-bold uppercase mb-1 typewriter">Load from previous backup:</p><div class="relative"><input type="file" @change="importData" id="importFile" class="hidden" accept=".json"><label for="importFile" class="w-full stamp-btn py-3 text-sm flex items-center justify-center cursor-pointer gap-2">📂 IMPORT BACKUP (.JSON)</label></div></div>
+                            <div class="pt-6"><button @click="window.print()" class="w-full bg-slate-800 text-white font-bold py-4 hover:bg-slate-700 transition flex items-center justify-center gap-2 text-lg">🖨️ PRINT FULL LEDGER (PDF)</button></div>
                         </div>
                     </div>
-                    
-                    <p class="text-[10px] typewriter text-center text-slate-400 px-8 leading-relaxed uppercase">
-                        Data is stored locally in your browser cache. Use the Export function for long-term safety.
-                    </p>
+                    <p class="text-[10px] typewriter text-center text-slate-400 px-8 leading-relaxed uppercase">Data is stored locally in your browser cache. Use the Export function for long-term safety.</p>
                 </section>
             </div>
-
         </div>
 
-        <footer class="mt-20 text-center typewriter text-[10px] uppercase text-slate-400 no-print border-t border-slate-200 pt-8 italic">
-            End of Record - Certified Private Ledger
-        </footer>
+        <footer class="mt-20 text-center typewriter text-[10px] uppercase text-slate-400 no-print border-t border-slate-200 pt-8 italic">End of Record - Certified Private Ledger</footer>
     </div>
 
     <script>
-        const { createApp, reactive, computed, watch } = Vue;
-
+        const { createApp, reactive, computed, watch, nextTick } = Vue;
         createApp({
             setup() {
-                const defaultData = {
-                    flights: { title: 'Air Passage', items: [{ from: '', to: '', date: '', depTime: '', arrTime: '', price: 0 }] },
-                    transport: { title: 'Ground Transport', items: [{ city: '', desc: '', price: 0 }] },
-                    hotels: { title: 'Accommodation', items: [{ city: '', desc: '', price: 0 }] },
-                    entertainment: { title: 'Activities', items: [{ city: '', desc: '', price: 0 }] },
-                    dining: { title: 'Dining & Food', items: [{ city: '', desc: '', price: 0 }] }
-                };
-
-                const defaultItinerary = {
-                    items: [
-                        { day: 'DAY 1', date: '', time: '', city: '', title: '', notes: '' },
-                        { day: 'DAY 2', date: '', time: '', city: '', title: '', notes: '' }
-                    ]
-                };
-
+                const defaultData = { flights: { title: 'Air Passage', items: [{ from: '', to: '', date: '', depTime: '', arrTime: '', price: 0 }] }, transport: { title: 'Ground Transport', items: [{ city: '', desc: '', price: 0 }] }, hotels: { title: 'Accommodation', items: [{ city: '', desc: '', price: 0 }] }, entertainment: { title: 'Activities', items: [{ city: '', desc: '', price: 0 }] }, dining: { title: 'Dining & Food', items: [{ city: '', desc: '', price: 0 }] } };
+                const defaultItinerary = { items: [{ day: 'DAY 1', date: '', time: '', city: '', title: '', notes: '', budget: 0 }, { day: 'DAY 2', date: '', time: '', city: '', title: '', notes: '', budget: 0 }] };
                 const saved = localStorage.getItem('retro_travel_data_v2');
                 const parsedSaved = saved ? JSON.parse(saved) : null;
                 const modules = reactive(parsedSaved && parsedSaved.flights ? parsedSaved : defaultData);
                 const itinerary = reactive(parsedSaved && parsedSaved.itinerary ? parsedSaved.itinerary : defaultItinerary);
-
                 if (modules.itinerary) delete modules.itinerary;
-
+                itinerary.items.forEach(item => { if (item.budget === undefined) item.budget = 0; });
                 const itineraryItems = computed(() => itinerary.items);
-
-                const cityModules = computed(() => {
-                    const { flights, ...others } = modules;
-                    return others;
-                });
-
-                const addItineraryItem = () => {
-                    itinerary.items.push({
-                        day: `DAY ${itinerary.items.length + 1}`,
-                        date: '',
-                        time: '',
-                        city: '',
-                        title: '',
-                        notes: ''
-                    });
-                };
-
-                const removeItineraryItem = (index) => {
-                    itinerary.items.splice(index, 1);
-                };
-
-                const addItem = (key) => {
-                    const newItem = key === 'flights' 
-                        ? { from: '', to: '', date: '', depTime: '', arrTime: '', price: 0 }
-                        : { city: '', desc: '', price: 0 };
-                    modules[key].items.push(newItem);
-                };
-
-                const removeItem = (key, index) => {
-                    if (modules[key].items.length > 0) modules[key].items.splice(index, 1);
-                };
-
-                const calculateModuleTotal = (key) => {
-                    return modules[key].items.reduce((sum, item) => sum + (Number(item.price) || 0), 0);
-                };
-                
-                const grandTotal = computed(() => {
-                    return Object.keys(modules).reduce((total, key) => total + calculateModuleTotal(key), 0);
-                });
-
-                const cityTotals = computed(() => {
-                    const totals = {};
-                    ['transport', 'hotels', 'entertainment', 'dining'].forEach(key => {
-                        modules[key].items.forEach(item => {
-                            if (item.city) {
-                                totals[item.city] = (totals[item.city] || 0) + (Number(item.price) || 0);
-                            }
-                        });
-                    });
-                    return totals;
-                });
-
-                const getBackupPayload = () => ({
-                    ...JSON.parse(JSON.stringify(modules)),
-                    itinerary: JSON.parse(JSON.stringify(itinerary))
-                });
-
-                const exportData = () => {
-                    const dataStr = JSON.stringify(getBackupPayload(), null, 2);
-                    const blob = new Blob([dataStr], { type: 'application/json' });
-                    const url = URL.createObjectURL(blob);
-                    const link = document.createElement('a');
-                    link.href = url;
-                    link.download = `travel-budget-${new Date().toISOString().slice(0,10)}.json`;
-                    link.click();
-                    URL.revokeObjectURL(url);
-                };
-
-                const importData = (event) => {
-                    const file = event.target.files[0];
-                    if (!file) return;
-                    const reader = new FileReader();
-                    reader.onload = (e) => {
-                        try {
-                            const imported = JSON.parse(e.target.result);
-                            if (imported.flights && imported.hotels) {
-                                const importedItinerary = imported.itinerary || defaultItinerary;
-                                delete imported.itinerary;
-                                Object.assign(modules, imported);
-                                Object.assign(itinerary, importedItinerary);
-                                alert('✅ 数据已导入！数据档案已更新。');
-                            }
-                        } catch (err) {
-                            alert('❌ 文件解析失败，请确保选择了正确的预算 JSON 文件。');
-                        }
-                    };
-                    reader.readAsText(file);
-                    event.target.value = '';
-                };
-
+                const cityModules = computed(() => { const { flights, ...others } = modules; return others; });
+                const addItineraryItem = () => itinerary.items.push({ day: `DAY ${itinerary.items.length + 1}`, date: '', time: '', city: '', title: '', notes: '', budget: 0 });
+                const removeItineraryItem = (index) => itinerary.items.splice(index, 1);
+                const moveItineraryItem = (index, direction) => { const target = index + direction; if (target < 0 || target >= itinerary.items.length) return; const [item] = itinerary.items.splice(index, 1); itinerary.items.splice(target, 0, item); };
+                const addItem = (key) => { const newItem = key === 'flights' ? { from: '', to: '', date: '', depTime: '', arrTime: '', price: 0 } : { city: '', desc: '', price: 0 }; modules[key].items.push(newItem); };
+                const removeItem = (key, index) => { if (modules[key].items.length > 0) modules[key].items.splice(index, 1); };
+                const calculateModuleTotal = (key) => modules[key].items.reduce((sum, item) => sum + (Number(item.price) || 0), 0);
+                const grandTotal = computed(() => Object.keys(modules).reduce((total, key) => total + calculateModuleTotal(key), 0));
+                const itineraryTotal = computed(() => itinerary.items.reduce((sum, item) => sum + (Number(item.budget) || 0), 0));
+                const combinedTotal = computed(() => grandTotal.value + itineraryTotal.value);
+                const daySummaries = computed(() => { const map = {}; itinerary.items.forEach(item => { const day = item.day || 'UNCLASSIFIED'; if (!map[day]) map[day] = { day, count: 0, total: 0 }; map[day].count += 1; map[day].total += Number(item.budget) || 0; }); return Object.values(map); });
+                const cityTotals = computed(() => { const totals = {}; ['transport', 'hotels', 'entertainment', 'dining'].forEach(key => { modules[key].items.forEach(item => { if (item.city) totals[item.city] = (totals[item.city] || 0) + (Number(item.price) || 0); }); }); itinerary.items.forEach(item => { if (item.city) totals[item.city] = (totals[item.city] || 0) + (Number(item.budget) || 0); }); return totals; });
+                const getBackupPayload = () => ({ ...JSON.parse(JSON.stringify(modules)), itinerary: JSON.parse(JSON.stringify(itinerary)) });
+                const exportData = () => { const dataStr = JSON.stringify(getBackupPayload(), null, 2); const blob = new Blob([dataStr], { type: 'application/json' }); const url = URL.createObjectURL(blob); const link = document.createElement('a'); link.href = url; link.download = `travel-budget-${new Date().toISOString().slice(0,10)}.json`; link.click(); URL.revokeObjectURL(url); };
+                const importData = (event) => { const file = event.target.files[0]; if (!file) return; const reader = new FileReader(); reader.onload = (e) => { try { const imported = JSON.parse(e.target.result); if (imported.flights && imported.hotels) { const importedItinerary = imported.itinerary || defaultItinerary; delete imported.itinerary; Object.assign(modules, imported); Object.assign(itinerary, importedItinerary); itinerary.items.forEach(item => { if (item.budget === undefined) item.budget = 0; }); alert('✅ 数据已导入！数据档案已更新。'); } } catch (err) { alert('❌ 文件解析失败，请确保选择了正确的预算 JSON 文件。'); } }; reader.readAsText(file); event.target.value = ''; };
+                const printItinerary = () => nextTick(() => window.print());
                 const currentDate = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
-
-                watch([modules, itinerary], () => {
-                    localStorage.setItem('retro_travel_data_v2', JSON.stringify(getBackupPayload()));
-                }, { deep: true });
-
-                return { 
-                    modules, cityModules, allModules: modules, itineraryItems,
-                    addItem, removeItem, addItineraryItem, removeItineraryItem,
-                    calculateModuleTotal, grandTotal, cityTotals,
-                    exportData, importData, currentDate 
-                };
+                watch([modules, itinerary], () => localStorage.setItem('retro_travel_data_v2', JSON.stringify(getBackupPayload())), { deep: true });
+                return { modules, cityModules, allModules: modules, itineraryItems, addItem, removeItem, addItineraryItem, removeItineraryItem, moveItineraryItem, calculateModuleTotal, grandTotal, itineraryTotal, combinedTotal, daySummaries, cityTotals, exportData, importData, printItinerary, currentDate };
             }
         }).mount('#app');
     </script>
