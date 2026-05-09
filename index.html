@@ -58,6 +58,21 @@
 
         .typewriter { font-family: 'Courier Prime', monospace; }
 
+        .timeline-line {
+            background-image: linear-gradient(#2d2a26 55%, rgba(45, 42, 38, 0) 0%);
+            background-position: right top;
+            background-size: 2px 12px;
+            background-repeat: repeat-y;
+        }
+
+        .timeline-dot {
+            width: 14px;
+            height: 14px;
+            border: 2px solid #2d2a26;
+            background: #fffdfa;
+            box-shadow: 2px 2px 0 #2d2a26;
+        }
+
         /* 复古红色印章 */
         .red-stamp {
             border: 4px border-double;
@@ -90,6 +105,42 @@
 
         <div class="space-y-12">
             
+            <section class="retro-card p-6">
+                <div class="flex justify-between items-center border-b-2 border-slate-800 pb-2 mb-6">
+                    <div>
+                        <p class="typewriter text-[10px] uppercase tracking-[0.25em] text-slate-500">Draft Route Plan</p>
+                        <h2 class="text-2xl font-bold italic">大概行程计划 (TIMELINE)</h2>
+                    </div>
+                    <button @click="addItineraryItem" class="stamp-btn text-xs no-print">+ ADD PLAN</button>
+                </div>
+
+                <div class="space-y-6">
+                    <div v-for="(item, index) in itineraryItems" :key="index" class="relative grid grid-cols-[96px_24px_1fr] md:grid-cols-[132px_32px_1fr] gap-3 md:gap-5 group">
+                        <div class="typewriter text-right pt-1">
+                            <input v-model="item.day" placeholder="DAY 1" class="retro-input w-full text-right text-xs font-bold uppercase">
+                            <input v-model="item.date" placeholder="MM-DD" class="retro-input w-full text-right text-[11px] mt-2 text-slate-500">
+                            <input v-model="item.time" placeholder="09:00" class="retro-input w-full text-right text-[11px] mt-2 text-slate-500">
+                        </div>
+
+                        <div class="relative flex justify-center timeline-line">
+                            <div class="timeline-dot rounded-full mt-2"></div>
+                        </div>
+
+                        <div class="border-l-4 border-double border-slate-800 pl-4 pb-6">
+                            <div class="grid grid-cols-1 md:grid-cols-[1fr_120px] gap-3">
+                                <input v-model="item.title" placeholder="行程标题 / PLAN TITLE" class="retro-input text-lg font-bold italic">
+                                <input v-model="item.city" placeholder="CITY" class="retro-input typewriter text-xs font-bold uppercase">
+                            </div>
+                            <textarea v-model="item.notes" placeholder="记录交通、景点、预约、备忘等大概安排..." rows="2" class="retro-input w-full mt-3 text-sm resize-y leading-relaxed"></textarea>
+                            <div class="flex justify-between items-center mt-2 typewriter text-[10px] text-slate-400 uppercase">
+                                <span>Timeline Entry #{{ index + 1 }}</span>
+                                <button @click="removeItineraryItem(index)" class="no-print opacity-30 group-hover:opacity-100 text-red-800 font-bold">DELETE</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
             <section class="retro-card p-6">
                 <div class="flex justify-between items-center border-b-2 border-slate-800 pb-2 mb-6">
                     <h2 class="text-2xl font-bold italic">航线飞行纪录 (FLIGHTS)</h2>
@@ -223,13 +274,41 @@
                     dining: { title: 'Dining & Food', items: [{ city: '', desc: '', price: 0 }] }
                 };
 
+                const defaultItinerary = {
+                    items: [
+                        { day: 'DAY 1', date: '', time: '', city: '', title: '', notes: '' },
+                        { day: 'DAY 2', date: '', time: '', city: '', title: '', notes: '' }
+                    ]
+                };
+
                 const saved = localStorage.getItem('retro_travel_data_v2');
-                const modules = reactive(saved ? JSON.parse(saved) : defaultData);
+                const parsedSaved = saved ? JSON.parse(saved) : null;
+                const modules = reactive(parsedSaved && parsedSaved.flights ? parsedSaved : defaultData);
+                const itinerary = reactive(parsedSaved && parsedSaved.itinerary ? parsedSaved.itinerary : defaultItinerary);
+
+                if (modules.itinerary) delete modules.itinerary;
+
+                const itineraryItems = computed(() => itinerary.items);
 
                 const cityModules = computed(() => {
                     const { flights, ...others } = modules;
                     return others;
                 });
+
+                const addItineraryItem = () => {
+                    itinerary.items.push({
+                        day: `DAY ${itinerary.items.length + 1}`,
+                        date: '',
+                        time: '',
+                        city: '',
+                        title: '',
+                        notes: ''
+                    });
+                };
+
+                const removeItineraryItem = (index) => {
+                    itinerary.items.splice(index, 1);
+                };
 
                 const addItem = (key) => {
                     const newItem = key === 'flights' 
@@ -262,8 +341,13 @@
                     return totals;
                 });
 
+                const getBackupPayload = () => ({
+                    ...JSON.parse(JSON.stringify(modules)),
+                    itinerary: JSON.parse(JSON.stringify(itinerary))
+                });
+
                 const exportData = () => {
-                    const dataStr = JSON.stringify(modules, null, 2);
+                    const dataStr = JSON.stringify(getBackupPayload(), null, 2);
                     const blob = new Blob([dataStr], { type: 'application/json' });
                     const url = URL.createObjectURL(blob);
                     const link = document.createElement('a');
@@ -281,7 +365,10 @@
                         try {
                             const imported = JSON.parse(e.target.result);
                             if (imported.flights && imported.hotels) {
+                                const importedItinerary = imported.itinerary || defaultItinerary;
+                                delete imported.itinerary;
                                 Object.assign(modules, imported);
+                                Object.assign(itinerary, importedItinerary);
                                 alert('✅ 数据已导入！数据档案已更新。');
                             }
                         } catch (err) {
@@ -294,13 +381,14 @@
 
                 const currentDate = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
 
-                watch(modules, (newVal) => {
-                    localStorage.setItem('retro_travel_data_v2', JSON.stringify(newVal));
+                watch([modules, itinerary], () => {
+                    localStorage.setItem('retro_travel_data_v2', JSON.stringify(getBackupPayload()));
                 }, { deep: true });
 
                 return { 
-                    modules, cityModules, allModules: modules, 
-                    addItem, removeItem, calculateModuleTotal, grandTotal, cityTotals,
+                    modules, cityModules, allModules: modules, itineraryItems,
+                    addItem, removeItem, addItineraryItem, removeItineraryItem,
+                    calculateModuleTotal, grandTotal, cityTotals,
                     exportData, importData, currentDate 
                 };
             }
